@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const BlacklistToken = require('../models/BlacklistToken');
 
 const generateToken = (userId) => {
     return jwt.sign({ userId }, process.env.JWT_SECRETKEY, { expiresIn: process.env.JWT_TOKEN_EXPIRYTIME });
@@ -41,6 +42,13 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
-    // You can clear any session data or JWT tokens here
+    // Extract token from request headers
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token) throw new Error('Token not found');
+
+    // Add token to blacklist
+    const blacklistedToken = new BlacklistToken({ token });
+    await blacklistedToken.save();
+
     res.json({ message: 'Logout successful' });
 };
