@@ -7,7 +7,7 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 
-// Dynamic port binding.
+// Dynamic port binding
 const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config({
